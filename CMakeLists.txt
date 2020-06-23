@@ -19,6 +19,6 @@ set(job_src src/job/base.cpp
 
 set(link_lib curl mysqlclient event boost_system boost_filesystem boost_program_options glog)
 
-add_executable(dbeth ${base_src} ${job_src})
+add_executable(balanceeth ${base_src} ${job_src})
 
-target_link_libraries(dbeth ${link_lib})
+target_link_libraries(balanceeth ${link_lib})

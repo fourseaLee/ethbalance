@@ -77,9 +77,12 @@ bool Rpc::getBalance(const std::string& address, std::string& eth, std::string& 
 
 LOG(INFO) << hex_eth;
 	json json_usdt;
-	json_usdt["to"] = "";
+	json_usdt["to"] = "0xdac17f958d2ee523a2206206994597c13d831ec7";
 	std::string data  = "0x70a08231000000000000000000000000" + address.substr(2,address.size());
+	json_usdt["data"] = data;
 	json_params.clear();
+	json_params.push_back(json_usdt);
+	json_params.push_back("latest");
 
 	structRpc("eth_call", json_params, json_post);
     json_response.clear();
