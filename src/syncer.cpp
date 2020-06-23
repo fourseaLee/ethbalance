@@ -14,7 +14,7 @@ static void ScanChain(int fd, short kind, void *ctx)
 {
     LOG(INFO) << "scan block begin ";
     Syncer::instance().scanBlockChain(); 
-    SetTimeout("ScanChain", 10);
+    SetTimeout("ScanChain", 2*60);
 }
 
 void Syncer::refreshDB()
@@ -38,14 +38,9 @@ void Syncer::scanBlockChain()
 
 	json json_data;
 	g_db_mysql->getData(sql, map_col_type, json_data);
-	if (json_data.size() > 0)
+	for(uint i = 0; i < json_data.size(); i++)
 	{
-		return;
-	}
-
-	for(uint i = 0; i < json_data[0].size(); i++)
-	{
-		std::string address = json_data[0][i].get<std::string>();
+		std::string address = json_data[i][0].get<std::string>();
 		std::string eth = "0";
 		std::string usdt = "0";
 		rpc_.getBalance(address, eth, usdt);
