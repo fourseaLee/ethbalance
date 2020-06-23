@@ -1,6 +1,7 @@
 #include "syncer.h"
 #include <glog/logging.h>
 #include "db_mysql.h"
+#include <time.h>
 
 static void SetTimeout(const std::string& name, int second)
 {
@@ -14,7 +15,7 @@ static void ScanChain(int fd, short kind, void *ctx)
 {
     LOG(INFO) << "scan block begin ";
     Syncer::instance().scanBlockChain(); 
-    SetTimeout("ScanChain", 2*60);
+    SetTimeout("ScanChain", 30*60);
 }
 
 void Syncer::refreshDB()
@@ -38,6 +39,9 @@ void Syncer::scanBlockChain()
 
 	json json_data;
 	g_db_mysql->getData(sql, map_col_type, json_data);
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	uint id  = tv.tv_sec;
 	for(uint i = 0; i < json_data.size(); i++)
 	{
 		std::string address = json_data[i][0].get<std::string>();
@@ -45,9 +49,10 @@ void Syncer::scanBlockChain()
 		std::string usdt = "0";
 		rpc_.getBalance(address, eth, usdt);
 		//UPDATE `ethdb`.`account` SET `eth`='0', `usdt`='0' WHERE  `address`='0xcd09aa30abe6aec8ebc8dbe7ae8de518d49b1ddf' AND `eth` IS NULL AND `usdt` IS NULL LIMIT 2;
-		std::string sql = "UPDATE `account` SET `eth`='" + eth + "', `usdt`='" + usdt + "' WHERE  `address`='" +  address + "';";
+//		std::string sql = "UPDATE `account` SET `eth`='" + eth + "', `usdt`='" + usdt + "' WHERE  `address`='" +  address + "';";
+		std::string sql = "INSERT INTO `accountid` (`id`, `address`, `eth`, `usdt`) VALUES ('" +std::to_string(id) + "', '" + address +"', '" + eth + "', '" + usdt +"');";
 		LOG(INFO) << sql;
-
+		g_db_mysql->refreshDB(sql);
 		vect_sql_.push_back(sql);
 	}
 
