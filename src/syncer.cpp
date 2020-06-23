@@ -32,7 +32,7 @@ void Syncer::refreshDB()
 void Syncer::scanBlockChain()
 {
 	//check height which is needed to upate
-	std::string sql = "select adddress from account ;";
+	std::string sql = "select address from account ;";
 	std::map<int,DBMysql::DataType> map_col_type;
 	map_col_type[0] = DBMysql::STRING;
 
