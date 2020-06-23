@@ -73,6 +73,8 @@ bool Rpc::getBalance(const std::string& address, std::string& eth, std::string& 
         return false;
     }
     std::string hex_eth = json_response["result"].get<std::string>();
+	eth = hex_eth.substr(2, hex_eth.size());
+
 LOG(INFO) << hex_eth;
 	json json_usdt;
 	json_usdt["to"] = "";
@@ -86,6 +88,8 @@ LOG(INFO) << hex_eth;
         return false;
     }
     std::string hex_usdt = json_response["result"].get<std::string>();
+
+	eth = hex_usdt.substr(2, hex_usdt.size());
 LOG(INFO) << hex_usdt;
 	return true;
 
