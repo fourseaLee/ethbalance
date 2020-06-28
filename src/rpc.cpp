@@ -3,6 +3,8 @@
 #include <iostream>
 #include <chrono>
 #include <fstream>
+#include <gmp.h>
+#include <gmpxx.h>
 
 static bool CurlPost(const std::string& url, const json &json_post, const std::string& auth, json& json_response)
 {
@@ -28,7 +30,7 @@ static bool CurlPost(const std::string& url, const json &json_post, const std::s
 
 bool Rpc::structRpc(const std::string& method, const json& json_params, json& json_post)
 {
-    json_post["jsonrpc"] = "1.0";
+    json_post["jsonrpc"] = "2.0";
     json_post["id"] = "curltest";
     json_post["method"] = method;
     json_post["params"] = json_params;
@@ -72,9 +74,10 @@ bool Rpc::getBalance(const std::string& address, std::string& eth, std::string& 
     {
         return false;
     }
-    std::string hex_eth = json_response["result"].get<std::string>();
 
-LOG(INFO) << hex_eth;
+    mpz_class eth_hex(json_response["result"].get<std::string>());
+	eth = eth_hex.get_str();
+
 	json json_usdt;
 	json_usdt["to"] = "0xdac17f958d2ee523a2206206994597c13d831ec7";
 	std::string data  = "0x70a08231000000000000000000000000" + address.substr(2,address.size());
@@ -89,20 +92,10 @@ LOG(INFO) << hex_eth;
     {
         return false;
     }
-    std::string hex_usdt = json_response["result"].get<std::string>();
+    mpz_class usdt_hex(json_response["result"].get<std::string>());
 
-	std::stringstream ss;
-    uint64_t int_eth=0, int_token =0;
-    ss << hex_eth.substr(2, hex_eth.size());
-    ss >> std::hex >> int_eth;
-    ss.clear();
+	usdt = usdt_hex.get_str();
 
-    ss << hex_usdt.substr(2, hex_usdt.size());
-    ss >> std::hex >> int_token;
-    eth = std::to_string(int_eth);
-    usdt = std::to_string(int_token);
-
-LOG(INFO) << hex_usdt;
 	return true;
 
 
