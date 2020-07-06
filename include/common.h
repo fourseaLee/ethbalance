@@ -22,5 +22,5 @@ struct CurlParams
 };
 
 bool CurlPostParams(const CurlParams& params, std::string& response);
-
+extern bool g_node_dump;
 #endif

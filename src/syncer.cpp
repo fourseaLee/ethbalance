@@ -48,6 +48,12 @@ void Syncer::scanBlockChain()
 		std::string eth = "0";
 		std::string usdt = "0";
 		rpc_.getBalance(address, eth, usdt);
+		if (g_node_dump)
+		{
+			g_node_dump = false;
+			vect_sql_.clear();
+			break;
+		}
 		//UPDATE `ethdb`.`account` SET `eth`='0', `usdt`='0' WHERE  `address`='0xcd09aa30abe6aec8ebc8dbe7ae8de518d49b1ddf' AND `eth` IS NULL AND `usdt` IS NULL LIMIT 2;
 //		std::string sql = "UPDATE `account` SET `eth`='" + eth + "', `usdt`='" + usdt + "' WHERE  `address`='" +  address + "';";
 		std::string sql = "INSERT INTO `accountid` (`id`, `address`, `eth`, `usdt`) VALUES ('" +std::to_string(id) + "', '" + address +"', '" + eth + "', '" + usdt +"');";
